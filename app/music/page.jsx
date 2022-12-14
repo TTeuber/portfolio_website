@@ -13,7 +13,7 @@ export default function Music() {
         fetch("/api/songNames").then((res) => {
             res.json().then((data) => setSongNames(data.names))
         })
-        sliderHelper();
+        // sliderHelper();
     }, []);
 
     useEffect(() => {
@@ -130,19 +130,28 @@ function AudioPlayer() {
     const seekSlider = useRef();
     const volumeSlider = useRef();
     const [time, setTime] = useState("0:00");
-    const [duration, setDuration] = useState("")
-    const [hold, setHold] = useState(false);
+    const [duration, setDuration] = useState("");
+    const [listening, setListening] = useState(true);
+
+    // useEffect(() => {
+    //     const thumb = document.querySelector("#seekSlider::-webkit-slider-thumb");
+    //     thumb.style.left = "2px";
+    // }, [])
 
     const getTime = useCallback(() => {
         let minutes = Math.floor(audio.current.currentTime / 60);
         let seconds = (((audio.current.currentTime / 60) - minutes) * 60 / 100).toFixed(2).split(".")[1];
+        if (seconds === "60") {
+            seconds = "00";
+            minutes = minutes + 1;
+        }
         setTime(`${minutes}:${seconds}`);
             if (time === duration && time !== "0:00") {
                 setPlaying(false)
             }
        }, [audio, duration, setPlaying, time])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         let minutes = Math.floor(audio.current.duration / 60);
         let seconds = (((audio.current.duration / 60) - minutes) * 60 / 100).toFixed(2).split(".")[1];
         if (isNaN(minutes)) {
@@ -151,48 +160,47 @@ function AudioPlayer() {
         if (seconds === undefined) {
             seconds = "00"
         }
+        if (seconds === "60") {
+            seconds = "00";
+            minutes = minutes + 1;
+        }
         setDuration(`${minutes}:${seconds}`);
 
     }, [audio, time])
 
-    useLayoutEffect(() => {
-        audio.current.addEventListener("timeupdate", timeUpdate)
-    }, [audio, timeUpdate])
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-   function timeUpdate() {
-        if (!hold) {
-            seekSlider.current.value = (audio.current.currentTime / audio.current.duration) * 1000
+    const timeListener = useCallback(() => {
+        if (audio.current !== null) {
+            if (listening) {
+                seekSlider.current.value = (audio.current.currentTime / audio.current.duration) * 1000;
+                sliderBackground();
+            }
+            getTime();
         }
-   }
+    }, [audio, getTime, listening])
 
-   function changeTime() {
-       audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration
-   }
+    function sliderBackground() {
+        const target = seekSlider.current;
+        const min = target.min;
+        const max = target.max;
+        const val = target.value;
 
-   function removeTime() {
-        audio.current.removeEventListener("timeupdate", timeUpdate)
-   }
+        target.style.backgroundSize = (val - min) * 100 / (max - min) + '% 100%';
 
-   function setListener() {
-        if (playing) {
-            audio.current.removeEventListener("timeupdate", timeUpdate);
-        } else {
-            audio.current.addEventListener("timeupdate", timeUpdate);
-        }
-   }
+        // const thumb = document.querySelector("#seekSlider::-webkit-slider-thumb");
+        // thumb.style.left = ((audio.current.currentTime / audio.current.duration) - 0.5) * 8 + 'px';
+    }
 
 
     return (
         <div className={"bg-gray-700 p-6 w-full flex justify-center"}>
             <div className={"w-3/4 flex flex-row gap-4"}>
-                <audio src={""} id={"song"} ref={audio} onTimeUpdate={() => {getTime()}}/>
+                <audio src={""} id={"song"} ref={audio} onTimeUpdate={() => {timeListener();}}/>
                 <div className={"w-20 text-center"}>
                     <button
                         id={"playButton"}
                         disabled={currentSong === ""}
                         className={`${(currentSong === "") ? "text-gray-600" : "hover:text-gray-300"}`}
-                        onClick={() => {playing ? audio.current.pause() : audio.current.play(); setPlaying(!playing); setListener()}}
+                        onClick={() => {playing ? audio.current.pause() : audio.current.play(); setPlaying(!playing);}}
                     >
                         {playing ? "Pause" : "Play"}
                     </button>
@@ -205,9 +213,14 @@ function AudioPlayer() {
                     id={"seekSlider"}
                     ref={seekSlider}
                     step={"1"}
-                    onDrag={() => {setHold(true); removeTime()}}
-                    onMouseUp={() => {changeTime(); setHold(false); audio.current.addEventListener("timeupdate", timeUpdate)}}
                     className={"w-full"}
+                    onChange={() => {
+                        setListening(false);
+                        sliderBackground();
+                    }}
+                    onMouseUp={() => {
+                        audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration;
+                        setListening(true);}}
                 />
                 <div className={"w-40 text-center"}>
                     <p>{`${time}/${duration}`}</p>
@@ -221,7 +234,12 @@ function AudioPlayer() {
                     defaultValue={"100"}
                     id={"volumeSlider"}
                     step={"1"}
-                    onChange={() => {audio.current.volume = ((volumeSlider.current.value ** 1.5) / 1000)}}
+                    onChange={() => {
+                        audio.current.volume = ((volumeSlider.current.value ** 1.5) / 1000);
+                        const target = volumeSlider.current;
+                        target.style.backgroundSize = (target.value - target.min) * 100 / (target.max - target.min)
+                            + (2 - ((target.value / target.max) * 3)) + '% 100%';
+                    }}
                 />
             </div>
         </div>
