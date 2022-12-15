@@ -7,9 +7,6 @@
 - skills?
 
 ## Music
-- Scrubber
-  - background
-  - functionality
 - Song list
   - name
   - photo?

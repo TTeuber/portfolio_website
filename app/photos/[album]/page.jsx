@@ -43,7 +43,7 @@ export default function Page({params}) {
                 {pics.map((pic, i) => {
                     return (
                         <div key={i} className={"h-80 w-80 border-4 border-black overflow-hidden bg-black"}>
-                            <Image src={pic} width={400} height={400} alt={"test"} onClick={() => openPhoto(pic)} className={"object-contain object-center h-full"}/>
+                            <Image src={pic} loading={"lazy"} width={400} height={400} alt={"test"} onClick={() => openPhoto(pic)} className={"object-contain object-center h-full"}/>
                         </div>)
                 })}
             </div>

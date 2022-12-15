@@ -13,7 +13,6 @@ export default function Music() {
         fetch("/api/songNames").then((res) => {
             res.json().then((data) => setSongNames(data.names))
         })
-        // sliderHelper();
     }, []);
 
     useEffect(() => {
@@ -22,25 +21,18 @@ export default function Music() {
 
     function chase() {
         const target = document.getElementById("seekSlider");
-        const min = target.min
-        const max = target.max
-        const val = target.value
-
-        // target.style.backgroundSize = (val - min) * 100 / (max - min) + '% 100%'
         target.style.backgroundSize = (audio.current.currentTime/audio.current.duration) * 100 + '% + 100%';
     }
 
-
-
     return (
-        <div className={""}>
+        <div>
             <SongContext.Provider value={{audio, playing, setPlaying, currentSong, setCurrentSong}}>
                 <div className={"flex flex-col gap-4"}>
                     {songNames.map((n, i) => {
                         return <SongPicker songName={`/audio/${n}`} key={i}/>
                     })}
                 </div>
-                <div className={"fixed w-screen flex justify-center bottom-0 left-0"}>
+                <div className={"fixed w-screen flex justify-center bottom-0 left-0 z-50"}>
                     <AudioPlayer/>
                 </div>
             </SongContext.Provider>
@@ -114,7 +106,6 @@ function AudioSlider() {
         }
     }, [audio, audio.current.currentTime])
 
-
     return (
         <div className={"h-8 flex flex-col justify-center"}>
             <div className={"h-2 w-full bg-gray-500 border border-gray-500 flex flex-col justify-center group"}>
@@ -132,11 +123,14 @@ function AudioPlayer() {
     const [time, setTime] = useState("0:00");
     const [duration, setDuration] = useState("");
     const [listening, setListening] = useState(true);
+    const [test, setTest] = useState("-6");
 
-    // useEffect(() => {
-    //     const thumb = document.querySelector("#seekSlider::-webkit-slider-thumb");
-    //     thumb.style.left = "2px";
-    // }, [])
+    const thumbPosition = useCallback(() => {
+        let val = ((seekSlider.current.value / 1000) - 0.5) * 12;
+        val = val.toFixed(2);
+        setTest(val);
+        document.styleSheets[0].cssRules[6].style.left = val + 'px';
+    }, [seekSlider])
 
     const getTime = useCallback(() => {
         let minutes = Math.floor(audio.current.currentTime / 60);
@@ -185,16 +179,12 @@ function AudioPlayer() {
         const val = target.value;
 
         target.style.backgroundSize = (val - min) * 100 / (max - min) + '% 100%';
-
-        // const thumb = document.querySelector("#seekSlider::-webkit-slider-thumb");
-        // thumb.style.left = ((audio.current.currentTime / audio.current.duration) - 0.5) * 8 + 'px';
     }
-
 
     return (
         <div className={"bg-gray-700 p-6 w-full flex justify-center"}>
             <div className={"w-3/4 flex flex-row gap-4"}>
-                <audio src={""} id={"song"} ref={audio} onTimeUpdate={() => {timeListener();}}/>
+                <audio src={""} id={"song"} ref={audio} onTimeUpdate={() => {timeListener(); thumbPosition()}}/>
                 <div className={"w-20 text-center"}>
                     <button
                         id={"playButton"}
@@ -205,23 +195,27 @@ function AudioPlayer() {
                         {playing ? "Pause" : "Play"}
                     </button>
                 </div>
-                <input
-                    type="range"
-                    min={"0"}
-                    max={"1000"}
-                    defaultValue={"0"}
-                    id={"seekSlider"}
-                    ref={seekSlider}
-                    step={"1"}
-                    className={"w-full"}
-                    onChange={() => {
-                        setListening(false);
-                        sliderBackground();
-                    }}
-                    onMouseUp={() => {
-                        audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration;
-                        setListening(true);}}
-                />
+                <div className={"w-full relative bottom-1 group "}>
+                    <input
+                        type="range"
+                        min={"0"}
+                        max={"1000"}
+                        defaultValue={"0"}
+                        id={"seekSlider"}
+                        ref={seekSlider}
+                        step={"1"}
+                        data-number={test}
+                        className={"w-full"}
+                        onChange={() => {
+                            setListening(false);
+                            sliderBackground();
+                            thumbPosition();
+                        }}
+                        onMouseUp={() => {
+                            audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration;
+                            setListening(true);}}
+                    />
+                </div>
                 <div className={"w-40 text-center"}>
                     <p>{`${time}/${duration}`}</p>
                 </div>
@@ -244,25 +238,4 @@ function AudioPlayer() {
             </div>
         </div>
     )
-}
-
-function sliderHelper() {
-    const rangeInputs = document.querySelectorAll('input[type="range"]')
-
-    function handleInputChange(e) {
-        let target = e.target
-        if (e.target.type !== 'range') {
-            target = document.getElementById('range')
-        }
-        const min = target.min
-        const max = target.max
-        const val = target.value
-
-        target.style.backgroundSize = (val - min) * 100 / (max - min) + 1 + '% 100%'
-    }
-
-    rangeInputs.forEach(input => {
-        input.addEventListener('input', handleInputChange)
-    })
-
 }
