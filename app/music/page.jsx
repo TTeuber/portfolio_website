@@ -123,18 +123,24 @@ function AudioPlayer() {
     const [time, setTime] = useState("0:00");
     const [duration, setDuration] = useState("");
     const [listening, setListening] = useState(true);
-    const [test, setTest] = useState("-6");
 
     const thumbPosition = useCallback(() => {
         let val = ((seekSlider.current.value / 1000) - 0.5) * 12;
         val = val.toFixed(2);
-        setTest(val);
         document.styleSheets[0].cssRules[6].style.left = val + 'px';
     }, [seekSlider])
 
     const getTime = useCallback(() => {
-        let minutes = Math.floor(audio.current.currentTime / 60);
-        let seconds = (((audio.current.currentTime / 60) - minutes) * 60 / 100).toFixed(2).split(".")[1];
+        let minutes;
+        let seconds;
+        if (listening) {
+            minutes = Math.floor(audio.current.currentTime / 60);
+            seconds = (((audio.current.currentTime / 60) - minutes) * 60 / 100).toFixed(2).split(".")[1];
+        } else {
+            const current = seekSlider.current.value / 1000 * audio.current.duration;
+            minutes = Math.floor(current / 60);
+            seconds = (((current / 60) - minutes) * 60 / 100).toFixed(2).split(".")[1];
+        }
         if (seconds === "60") {
             seconds = "00";
             minutes = minutes + 1;
@@ -143,7 +149,7 @@ function AudioPlayer() {
             if (time === duration && time !== "0:00") {
                 setPlaying(false)
             }
-       }, [audio, duration, setPlaying, time])
+       }, [audio, duration, listening, setPlaying, time])
 
     useLayoutEffect(() => {
         let minutes = Math.floor(audio.current.duration / 60);
@@ -167,8 +173,8 @@ function AudioPlayer() {
             if (listening) {
                 seekSlider.current.value = (audio.current.currentTime / audio.current.duration) * 1000;
                 sliderBackground();
+                getTime();
             }
-            getTime();
         }
     }, [audio, getTime, listening])
 
@@ -195,26 +201,30 @@ function AudioPlayer() {
                         {playing ? "Pause" : "Play"}
                     </button>
                 </div>
-                <div className={"w-full relative bottom-1 group "}>
-                    <input
-                        type="range"
-                        min={"0"}
-                        max={"1000"}
-                        defaultValue={"0"}
-                        id={"seekSlider"}
-                        ref={seekSlider}
-                        step={"1"}
-                        data-number={test}
-                        className={"w-full"}
-                        onChange={() => {
-                            setListening(false);
-                            sliderBackground();
-                            thumbPosition();
-                        }}
-                        onMouseUp={() => {
-                            audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration;
-                            setListening(true);}}
-                    />
+                <div className={"w-full relative bottom-1"}>
+                    <div className={`absolute w-full h-full ${duration === "0:00" ? "z-10" : "-z-10"}`}/>
+                    <div className={"relative w-full group z-0"}>
+                        <input
+                            type="range"
+                            min={"0"}
+                            max={"1000"}
+                            defaultValue={"0"}
+                            id={"seekSlider"}
+                            ref={seekSlider}
+                            step={"1"}
+                            className={"w-full"}
+                            disabled={duration === "0:00"}
+                            onChange={() => {
+                                setListening(false);
+                                sliderBackground();
+                                thumbPosition();
+                                getTime();
+                            }}
+                            onMouseUp={() => {
+                                audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration;
+                                setListening(true);}}
+                        />
+                    </div>
                 </div>
                 <div className={"w-40 text-center"}>
                     <p>{`${time}/${duration}`}</p>
