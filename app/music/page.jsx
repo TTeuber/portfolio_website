@@ -1,5 +1,11 @@
 "use client";
 import {createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
+import Image from "next/image";
+import playBtnImg from "../../public/icons/play.png";
+import pauseBtnImg from "../../public/icons/pause.png";
+import PocketBase from "pocketbase";
+
+const client = new PocketBase("http://127.0.0.1:8090");
 
 const SongContext = createContext();
 
@@ -26,11 +32,14 @@ export default function Music() {
 
     return (
         <div>
+            <h1 className={"text-6xl lg:text-8xl text-center mb-20"}>Songs</h1>
             <SongContext.Provider value={{audio, playing, setPlaying, currentSong, setCurrentSong}}>
-                <div className={"flex flex-col gap-4"}>
-                    {songNames.map((n, i) => {
-                        return <SongPicker songName={`/audio/${n}`} key={i}/>
-                    })}
+                <div className={"border-2 border-gray-700 p-6 rounded-2xl bg-gray-800"}>
+                    <div className={"flex flex-col gap-4"}>
+                        {songNames.map((n, i) => {
+                            return <SongPicker songName={`/audio/${n}`} key={i}/>
+                        })}
+                    </div>
                 </div>
                 <div className={"fixed w-screen flex justify-center bottom-0 left-0 z-50"}>
                     <AudioPlayer/>
@@ -42,7 +51,12 @@ export default function Music() {
 
 function SongPicker({songName}) {
     const {audio, playing, setPlaying, currentSong, setCurrentSong} = useContext(SongContext);
-
+    const [duration, setDuration] = useState("0");
+    const [songDurations] = useState({
+        "Call_Me.mp3": "2:15",
+        "Waiting.mp3": "3:39",
+        "Love_Limbo.mp3": "4:10"
+    })
     function changeSong() {
         if (currentSong !== songName) {
             audio.current.pause();
@@ -61,60 +75,80 @@ function SongPicker({songName}) {
         }
     }
 
-    function checkSelected() {
-        if (currentSong === songName) {
-            const picker = document.getElementById(`songPicker_${songName}`);
-            if (picker !== null) {
-                picker.classList.replace("border", "border-4");
-            }
-            return "selected";
-        } else {
-            const picker = document.getElementById(`songPicker_${songName}`);
-            if (picker !== null) {
-                picker.classList.replace("border-4", "border");
-            }
-            return "select";
-        }
-    }
+    // function checkSelected() {
+    //     if (currentSong === songName) {
+    //         const picker = document.getElementById(`songPicker_${songName}`);
+    //         if (picker !== null) {
+    //             picker.classList.replace("border", "border-4");
+    //         }
+    //         return "selected";
+    //     } else {
+    //         const picker = document.getElementById(`songPicker_${songName}`);
+    //         if (picker !== null) {
+    //             picker.classList.replace("border-4", "border");
+    //         }
+    //         return "select";
+    //     }
+    // }
+
+    // const getSongDuration = useCallback(async function() {
+    //     const song = songName.split("/")[2];
+    //     return await client.records.getList("durations", 1,1, {
+    //         filter: `title == "${song}"`
+    //     });
+    // }, [songName]);
+    //
+    // useEffect(() => {
+    //     getSongDuration().then((res) => {
+    //         console.log(res[0].duration);
+    //     })
+    // }, [getSongDuration]);
 
     function checkPlaying() {
         if (currentSong === songName && playing === true) {
-            return "playing";
+            return (
+                <Image src={"/icons/pause.png"} alt={"pause"} width={100} height={100} className={"w-6"}/>
+            )
         } else {
-            return "play";
+            return (
+                <Image src={"/icons/play.png"} alt={"play"} width={100} height={100} className={"w-6"}/>
+            )
         }
     }
 
     return (
-        <div id={`songPicker_${songName}`} className={"border p-6 z-50 hover:cursor-pointer"} onClick={() => {changeSong()}}>
-            <p>{songName}</p>
-            <p>{checkPlaying()}</p>
-            <p>{playing ? 1 : 2}</p>
-            {(currentSong === songName) && <AudioSlider/>}
-        </div>
-    )
-}
-
-function AudioSlider() {
-    const {audio} = useContext(SongContext);
-    const [time, setTime] = useState(0);
-
-    useEffect(() => {
-        if (!isNaN(audio.current.duration)) {
-            const x = (audio.current.currentTime/audio.current.duration) * 100;
-            setTime(x);
-        }
-    }, [audio, audio.current.currentTime])
-
-    return (
-        <div className={"h-8 flex flex-col justify-center"}>
-            <div className={"h-2 w-full bg-gray-500 border border-gray-500 flex flex-col justify-center group"}>
-                <div className={"h-2 right-1/2 bg-black h-full"} style={{width: `${time}%`}}/>
-                <div className={"absolute h-4 w-4 rounded-full bg-white opacity-0 group-hover:opacity-100"} style={{left: `${time}%`}}/>
+        <div id={`songPicker_${songName}`} className={"z-50 hover:cursor-pointer flex text-2xl"} onClick={() => {changeSong()}}>
+            <p className={"border-r p-4 w-20 flex items-center"}>{checkPlaying()}</p>
+            <div className={"flex items-center flex-grow"}>
+                <p className={"p-4"}>{songName.split("/")[2].split(".")[0].replace("_", " ")}</p>
+            </div>
+            <div className={"flex items-center"}>
+                <p>{songDurations[songName.split("/")[2]]}</p>
             </div>
         </div>
     )
 }
+
+// function AudioSlider() {
+//     const {audio} = useContext(SongContext);
+//     const [time, setTime] = useState(0);
+//
+//     useEffect(() => {
+//         if (!isNaN(audio.current.duration)) {
+//             const x = (audio.current.currentTime/audio.current.duration) * 100;
+//             setTime(x);
+//         }
+//     }, [audio, audio.current.currentTime])
+//
+//     return (
+//         <div className={"h-8 flex flex-col justify-center"}>
+//             <div className={"h-2 w-full bg-gray-500 border border-gray-500 flex flex-col justify-center group"}>
+//                 <div className={"h-2 right-1/2 bg-black h-full"} style={{width: `${time}%`}}/>
+//                 <div className={"absolute h-4 w-4 rounded-full bg-white opacity-0 group-hover:opacity-100"} style={{left: `${time}%`}}/>
+//             </div>
+//         </div>
+//     )
+// }
 
 function AudioPlayer() {
     const {audio, playing, setPlaying, currentSong} = useContext(SongContext);
@@ -188,17 +222,17 @@ function AudioPlayer() {
     }
 
     return (
-        <div className={"bg-gray-700 p-6 w-full flex justify-center"}>
+        <div className={"relative bg-gray-700 p-6 w-full flex justify-center"}>
             <div className={"w-3/4 flex flex-row gap-4"}>
                 <audio src={""} id={"song"} ref={audio} onTimeUpdate={() => {timeListener(); thumbPosition()}}/>
-                <div className={"w-20 text-center"}>
+                <div className={"w-20 text-center h-8"}>
                     <button
                         id={"playButton"}
                         disabled={currentSong === ""}
-                        className={`${(currentSong === "") ? "text-gray-600" : "hover:text-gray-300"}`}
+                        className={`absolute bottom-7 ${(currentSong === "") ? "text-gray-600" : "hover:text-gray-300"}`}
                         onClick={() => {playing ? audio.current.pause() : audio.current.play(); setPlaying(!playing);}}
                     >
-                        {playing ? "Pause" : "Play"}
+                        <Image src={playing ? pauseBtnImg : playBtnImg} alt={"play button"} height={100} width={100} className={"w-4"}/>
                     </button>
                 </div>
                 <div className={"w-full relative bottom-1"}>
@@ -229,8 +263,9 @@ function AudioPlayer() {
                 <div className={"w-40 text-center"}>
                     <p>{`${time}/${duration}`}</p>
                 </div>
-                <label htmlFor={"volumeSlider"}>Volume</label>
+                <label htmlFor={"volumeSlider"} className={"fixed -z-10 md:static md:z-0"}>Volume</label>
                 <input
+                    className={"fixed -z-10 md:static md:z-0 w-0 md:w-36"}
                     type="range"
                     min={"0"}
                     max={"100"}
@@ -239,7 +274,7 @@ function AudioPlayer() {
                     id={"volumeSlider"}
                     step={"1"}
                     onChange={() => {
-                        audio.current.volume = ((volumeSlider.current.value ** 1.5) / 1000);
+                        audio.current.volume = ((100 ** (volumeSlider.current.value/100)) / 100);
                         const target = volumeSlider.current;
                         target.style.backgroundSize = (target.value - target.min) * 100 / (target.max - target.min)
                             + (2 - ((target.value / target.max) * 3)) + '% 100%';
