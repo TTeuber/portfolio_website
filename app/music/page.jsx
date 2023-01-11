@@ -3,9 +3,6 @@ import {createContext, useCallback, useContext, useEffect, useLayoutEffect, useR
 import Image from "next/image";
 import playBtnImg from "../../public/icons/play.png";
 import pauseBtnImg from "../../public/icons/pause.png";
-import PocketBase from "pocketbase";
-
-const client = new PocketBase("http://127.0.0.1:8090");
 
 const SongContext = createContext();
 
@@ -75,35 +72,6 @@ function SongPicker({songName}) {
         }
     }
 
-    // function checkSelected() {
-    //     if (currentSong === songName) {
-    //         const picker = document.getElementById(`songPicker_${songName}`);
-    //         if (picker !== null) {
-    //             picker.classList.replace("border", "border-4");
-    //         }
-    //         return "selected";
-    //     } else {
-    //         const picker = document.getElementById(`songPicker_${songName}`);
-    //         if (picker !== null) {
-    //             picker.classList.replace("border-4", "border");
-    //         }
-    //         return "select";
-    //     }
-    // }
-
-    // const getSongDuration = useCallback(async function() {
-    //     const song = songName.split("/")[2];
-    //     return await client.records.getList("durations", 1,1, {
-    //         filter: `title == "${song}"`
-    //     });
-    // }, [songName]);
-    //
-    // useEffect(() => {
-    //     getSongDuration().then((res) => {
-    //         console.log(res[0].duration);
-    //     })
-    // }, [getSongDuration]);
-
     function checkPlaying() {
         if (currentSong === songName && playing === true) {
             return (
@@ -128,27 +96,6 @@ function SongPicker({songName}) {
         </div>
     )
 }
-
-// function AudioSlider() {
-//     const {audio} = useContext(SongContext);
-//     const [time, setTime] = useState(0);
-//
-//     useEffect(() => {
-//         if (!isNaN(audio.current.duration)) {
-//             const x = (audio.current.currentTime/audio.current.duration) * 100;
-//             setTime(x);
-//         }
-//     }, [audio, audio.current.currentTime])
-//
-//     return (
-//         <div className={"h-8 flex flex-col justify-center"}>
-//             <div className={"h-2 w-full bg-gray-500 border border-gray-500 flex flex-col justify-center group"}>
-//                 <div className={"h-2 right-1/2 bg-black h-full"} style={{width: `${time}%`}}/>
-//                 <div className={"absolute h-4 w-4 rounded-full bg-white opacity-0 group-hover:opacity-100"} style={{left: `${time}%`}}/>
-//             </div>
-//         </div>
-//     )
-// }
 
 function AudioPlayer() {
     const {audio, playing, setPlaying, currentSong} = useContext(SongContext);
