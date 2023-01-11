@@ -49,24 +49,23 @@ export default function CirclePlayer({width, src, context, time}) {
     }, [source, src])
 
     return (
-        <div style={{height: `${width+8}px`, width:`${width+8}px`}} className={"relative rounded-full overflow-hidden shadow-xl border-4 border-black border-opacity-50"}>
+        <div className={"h-[278px] w-[278px] md:h-[208px] md:w-[208px] xl:h-[278px] xl:w-[278px] relative rounded-full overflow-hidden shadow-xl border-4 border-black border-opacity-50"}>
             <div id={"circle"} className={`bg-black rounded-full h-full w-full absolute opacity-50`}></div>
             <div id={"right-window"} className={`absolute h-full w-1/2 left-1/2 overflow-hidden`}>
-                <div id={"right-spinner"} className={`h-full relative right-full`}
-                     style={{transform: `rotate(0deg)`, width: `${width}px`}} ref={rightCover}>
+                <div id={"right-spinner"} className={`w-[270px] md:w-[200px] xl:w-[270px] h-full relative right-full`}
+                     style={{transform: `rotate(0deg)`}} ref={rightCover}>
                     <div id={"right-cover"} className={"bg-gray-700 absolute left-1/2 h-full w-1/2 opacity-40"}></div>
                 </div>
             </div>
             <div id={"left-window"} className={`absolute h-full w-1/2 overflow-hidden`}>
-                <div id={"left-spinner"} className={`h-full relative`}
-                     style={{transform: `rotate(0deg)`, width: `${width}px`, left: "1px"}} ref={leftCover}>
+                <div id={"left-spinner"} className={`h-full relative w-[270px] md:w-[200px] xl:w-[270px]`}
+                     style={{transform: `rotate(0deg)`, left: "1px"}} ref={leftCover}>
                     <div id={"left-cover"} className={"bg-gray-700 absolute h-full w-1/2 opacity-40"}></div>
                 </div>
             </div>
-            <button className={"absolute w-full h-full z-20 rounded-full flex justify-center items-center"}
-                    style={{fontSize: `${width/3}px`}}
+            <button className={"absolute w-full h-full z-20 rounded-full flex justify-center items-center text-[90px] md:text-[66px] xl:text-[90px]"}
                     onClick={() => {setPlaying(!playing); setSource(src); pickSong(src, playing, time);}}>
-                <Image src={playing ? pauseBtnImg : playBtnImg} alt={"play button"} height={100} width={100} className={`w-[${width/100}px] opacity-80`}/>
+                <Image src={playing ? pauseBtnImg : playBtnImg} alt={"play button"} height={100} width={100} className={`w-[90px] md:w-[66px] xl:w-[90px] opacity-80`}/>
             </button>
         </div>
     )

@@ -41,7 +41,7 @@ export default function Music() {
                         })}
                     </div>
                 </div>
-                <div className={"fixed w-screen flex justify-center bottom-0 left-0 z-50"}>
+                <div className={"fixed w-screen flex justify-center bottom-0 left-0 z-40"}>
                     <AudioPlayer/>
                 </div>
             </SongContext.Provider>
@@ -117,7 +117,7 @@ function SongPicker({songName}) {
     }
 
     return (
-        <div id={`songPicker_${songName}`} className={"z-50 hover:cursor-pointer flex text-2xl"} onClick={() => {changeSong()}}>
+        <div id={`songPicker_${songName}`} className={"z-40 hover:cursor-pointer flex text-2xl"} onClick={() => {changeSong()}}>
             <p className={"border-r p-4 w-20 flex items-center"}>{checkPlaying()}</p>
             <div className={"flex items-center flex-grow"}>
                 <p className={"p-4"}>{songName.split("/")[2].split(".")[0].replace("_", " ")}</p>
@@ -223,7 +223,7 @@ function AudioPlayer() {
 
     return (
         <div className={"relative bg-gray-700 p-6 w-full flex justify-center"}>
-            <div className={"w-3/4 flex flex-row gap-4"}>
+            <div className={"w-full lg:w-3/4 flex flex-row gap-4"}>
                 <audio src={""} id={"song"} ref={audio} onTimeUpdate={() => {timeListener(); thumbPosition()}}/>
                 <div className={"w-20 text-center h-8"}>
                     <button

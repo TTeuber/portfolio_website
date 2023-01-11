@@ -83,6 +83,8 @@ export default function Home() {
         audio.current.volume = 0.1;
     }, []);
 
+    const [songSelect, setSongSelect] = useState(1);
+
     return (
         <div className={"relative z-10"}>
             <h1 className={"text-6xl lg:text-8xl text-center drop-shadow-2xl shadow-gray-50"}>Tyler Teuber's Multimedia<br/> Portfolio Site</h1>
@@ -118,20 +120,22 @@ export default function Home() {
                     <Link href={"/music"} className={"text-6xl relative drop-shadow-2xl mt-6"}>Music</Link>
                 </div>
                 <audio src="/audio/Call_Me.mp3" ref={audio} controls={false}></audio>
-                <div className={"relative p-6 h-[430px] w-full bg-gray-800 flex justify-around rounded-2xl my-4 shadow-2xl border-2 border-gray-700 text-2xl"}>
+                <div className={"relative p-6 h-[400px] md:h-[340px] xl:h-[400px] w-full bg-gray-800 flex justify-around rounded-2xl my-4 shadow-2xl border-2 border-gray-700 text-2xl"}>
                     <MusicContext.Provider value={{source, setSource, pickSong, audio}}>
-                        <div className={"flex flex-col items-center absolute lg:static -z-10 lg:z-10"}>
+                        <button className={"bg-gray-900 rounded-full border-2 border-gray-600 h-20 w-20 absolute left-5 bottom-1/2 md:fixed md:-z-50 md:w-0 md:border-none"} onClick={() => setSongSelect(songSelect - 1)}>{"<"}</button>
+                        <div className={`flex flex-col items-center ${Math.abs(songSelect % 3) !== 0 ? "fixed -z-10" : "absolute"} md:static md:z-10`}>
                             <CirclePlayer width={300} src={"/audio/Call_Me.mp3"} context={MusicContext} time={36}/>
                             <p className={"mt-6"}>Call Me</p>
                         </div>
-                        <div className={"flex flex-col items-center absolute lg:static"}>
+                        <div className={`flex flex-col items-center ${Math.abs(songSelect % 3) !== 1 ? "fixed -z-10" : "absolute"} md:static md:z-10`}>
                             <CirclePlayer width={300} src={"/audio/Waiting.mp3"} context={MusicContext} time={80}/>
                             <p className={"mt-6"}>Waiting</p>
                         </div>
-                        <div className={"flex flex-col items-center absolute lg:static -z-10 lg:z-10"}>
+                        <div className={`flex flex-col items-center ${Math.abs(songSelect % 3) !== 2 ? "fixed -z-10" : "absolute"} md:static md:z-10`}>
                             <CirclePlayer width={300} src={"/audio/Love_Limbo.mp3"} context={MusicContext} time={87.5}/>
                             <p className={"mt-6"}>Love Limbo</p>
                         </div>
+                        <button className={"bg-gray-900 rounded-full border-2 border-gray-600 h-20 w-20 absolute right-5 bottom-1/2 md:fixed md:-z-10 md:w-0 md:border-none   "} onClick={() => setSongSelect(songSelect + 1)}>{">"}</button>
                     </MusicContext.Provider>
                     <button className={"absolute bottom-2 left-2 border-2 border-gray-700 text-gray-600 hover:text-gray-400 hover:border-gray-500 rounded-full h-8 w-8 text-center text-xl"} onClick={() => setShowMusic(!showMusic)}>i</button>
                 </div>
@@ -144,7 +148,7 @@ export default function Home() {
                     <Link href={"/blogs"} className={"text-6xl drop-shadow-2xl mt-6"}>Blogs</Link>
                 </div>
                 <div className={"p-6 bg-gray-800 rounded-2xl mt-6 h-32 text-4xl shadow-2xl border-2 border-gray-700"}>
-                    <p>description</p>
+                    <p>Personal blogs will be added in the future.</p>
                 </div>
             </div>
         </div>
