@@ -1,14 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import fs from "fs";
+import path from "path";
 
-const path = "/Users/tylerteuber/WebstormProjects/website_test/public/images/"
+const imgPath = "../../../../public/images/";
 
 export default function Photos() {
-    const files = fs.readdirSync(path);
+    const files = fs.readdirSync(path.resolve(__dirname, imgPath));
     files.splice(files.indexOf(".DS_Store"), 1);
     files.sort((a, b) => {
-        return -(fs.readdirSync(path + a).length - fs.readdirSync(path + b).length);
+        return -(fs.readdirSync(path.resolve(__dirname, imgPath + a)).length - fs.readdirSync(path.resolve(__dirname, imgPath + b)).length);
     })
 
     return (
@@ -24,7 +25,7 @@ export default function Photos() {
 }
 
 function Album(props) {
-    const photos = fs.readdirSync(path + props.name + '/')
+    const photos = fs.readdirSync(path.resolve(__dirname, imgPath + props.name + '/'));
     return (
         <Link href={`/photos/${props.name}`} className={"flex flex-col items-center"}>
             <div className={"w-80 h-64 translate-x-8 hover:z-10 group hover:cursor-pointer"}>
