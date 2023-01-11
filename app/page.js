@@ -10,7 +10,6 @@ export default function Home() {
     const [source, setSource] = useState("");
     const audio = useRef(null);
     const [imgUrls, setImgUrls] = useState([]);
-    const fetchPics = useRef(false);
     const [showPics, setShowPics] = useState(false);
     const [showMusic, setShowMusic] = useState(false);
     const [picObj, setPicObj] = useState({
@@ -59,19 +58,14 @@ export default function Home() {
     }, []);
 
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const names = ["/Kaia/Kaia_22.jpg", "/City/City_2.jpg", "/Kodiak/Kodiak_7.jpg", "/Labs/Labs_4.jpg", "/Animals/Animals_6.jpg"];
-        if (fetchPics.current) {
-            names.forEach(name => getImage("/api" + name));
-            fetchPics.current = false;
-        }
-        else {
-            fetchPics.current = true;
-        }
-        // return () => fetchPics.current = false;
+
+        names.forEach(name => getImage("/api" + name));
+
     }, [getImage]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         setPicObj({
             first: imgUrls[0],
             second: imgUrls[1],
