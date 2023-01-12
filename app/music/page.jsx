@@ -31,7 +31,8 @@ export default function Music() {
         <div>
             <h1 className={"text-6xl lg:text-8xl text-center mb-20"}>Songs</h1>
             <SongContext.Provider value={{audio, playing, setPlaying, currentSong, setCurrentSong}}>
-                <div className={"border-2 border-gray-700 p-6 rounded-2xl bg-gray-800"}>
+                <div className={"sm:border-2 border-gray-700 p-6 sm:rounded-2xl sm:bg-gray-800"}>
+                    <div className={"absolute inset-x-0 bg-gray-800 blur-lg sm:blur-none h-3/4 -bottom-0.5 w-full sm:opacity-0"}></div>
                     <div className={"flex flex-col gap-4"}>
                         {songNames.map((n, i) => {
                             return <SongPicker songName={`/audio/${n}`} key={i}/>

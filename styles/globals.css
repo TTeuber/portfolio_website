@@ -43,6 +43,21 @@ input[type="range"]::-webkit-slider-runnable-track {
   @apply relative bg-transparent h-2 rounded-full
 }
 
+input[type="range"]::-moz-range-thumb {
+  -moz-appearance: none;
+  @apply bg-gray-800 rounded-full h-4 w-4 relative bottom-1
+}
+
+#seekSlider::-moz-range-thumb {
+  @apply opacity-0 group-hover:opacity-100 transition-all ease-in duration-100
+}
+
+input[type="range"]::-moz-range-track {
+  -moz-appearance: none;
+  @apply relative bg-transparent h-2 rounded-full
+}
+
+
 
 
 @tailwind components;
