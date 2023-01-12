@@ -52,7 +52,7 @@ function SongPicker({songName}) {
     const [songDurations] = useState({
         "Call_Me.mp3": "2:15",
         "Waiting.mp3": "3:39",
-        "Love_Limbo.mp3": "4:10"
+        "Summer_Sound.mp3": "2:26"
     })
     function changeSong() {
         if (currentSong !== songName) {

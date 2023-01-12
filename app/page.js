@@ -126,8 +126,8 @@ export default function Home() {
                             <p className={"mt-6"}>Waiting</p>
                         </div>
                         <div className={`flex flex-col items-center ${Math.abs(songSelect % 3) !== 2 ? "fixed -z-10" : "absolute"} md:static md:z-10`}>
-                            <CirclePlayer width={300} src={"/audio/Love_Limbo.mp3"} context={MusicContext} time={87.5}/>
-                            <p className={"mt-6"}>Love Limbo</p>
+                            <CirclePlayer width={300} src={"/audio/Summer_Sound.mp3"} context={MusicContext} time={45.4}/>
+                            <p className={"mt-6"}>Summer Sound</p>
                         </div>
                         <button className={"bg-gray-900 rounded-full border-2 border-gray-600 h-20 w-20 absolute right-5 bottom-1/2 md:fixed md:-z-10 md:w-0 md:border-none   "} onClick={() => setSongSelect(songSelect + 1)}>{">"}</button>
                     </MusicContext.Provider>
