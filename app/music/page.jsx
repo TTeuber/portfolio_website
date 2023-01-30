@@ -196,13 +196,16 @@ function AudioPlayer() {
                             step={"1"}
                             className={"w-full"}
                             disabled={duration === "0:00"}
-                            onChange={() => {
+                            onInput={() => {
                                 setListening(false);
                                 sliderBackground();
                                 thumbPosition();
                                 getTime();
                             }}
                             onMouseUp={() => {
+                                audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration;
+                                setListening(true);}}
+                            onTouchEnd={() => {
                                 audio.current.currentTime = (seekSlider.current.value / 1000) * audio.current.duration;
                                 setListening(true);}}
                         />

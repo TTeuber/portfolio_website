@@ -82,9 +82,16 @@ export default function Home() {
     return (
         <div className={"relative z-10"}>
             <h1 className={"text-6xl lg:text-8xl text-center drop-shadow-2xl shadow-gray-50"}>Tyler Teuber's Multimedia<br/> Portfolio Site</h1>
+            <div id={"about"} className={"relative mt-20"}>
+                <Link href={"/about"} className={"text-6xl drop-shadow-2xl mx-4"}>About</Link>
+                <div className={"relative p-6 w-full bg-gray-800 sm:rounded-2xl shadow-2xl sm:border-2 border-gray-700 my-4 flex justify-center flex items-center"}>
+                    <p className={"text-4xl"}>This is my portfolio site. It was built using Next.js and uses my own music and photography as content. You can find a link to the github repo for this site <a
+                        href="https://github.com/TTeuber/portfolio_website" className={"underline cursor-pointer hover:text-gray-300"}>here</a>.</p>
+                </div>
+            </div>
             <div id={"photography"} className={"relative mt-20"}>
                 <Link href={"/photos"} className={"text-6xl drop-shadow-2xl mx-4"}>Photography</Link>
-                <div className={"relative p-6 h-96 w-full bg-gray-800 rounded-2xl shadow-2xl border-2 border-gray-700 my-4 flex justify-center flex items-center"}>
+                <div className={"relative p-6 h-96 w-full bg-gray-800 sm:rounded-2xl shadow-2xl sm:border-2 border-gray-700 my-4 flex justify-center flex items-center"}>
                     <div className={"absolute flex justify-evenly w-full items-center"}>
                         <div className={"absolute inset-0 bg-black opacity-50"}></div>
                         <div className={"h-72 grow text-center flex flex-col justify-center left-0 hover:cursor-pointer z-10"} onClick={() => chooseImg("left")}>
@@ -108,13 +115,13 @@ export default function Home() {
             </div>
             <div id={"music"} className={"relative -z-10"}>
                 <div className={`relative w-full flex flex-row-reverse transition-all duration-500 ${showPics ? "mt-40 sm:mt-36 md:mt-30 lg:mt-24" : ""}`}>
-                    <div className={"w-full bg-gray-900 p-6 text-2xl rounded-2xl absolute bottom-full"}>
+                    <div className={"w-full bg-gray-900 p-6 text-2xl sm:rounded-2xl absolute bottom-full"}>
                         <p>Photos that I have taken. Mostly of dogs and landscapes.</p>
                     </div>
                     <Link href={"/music"} className={"text-6xl relative drop-shadow-2xl mt-6 mx-4"}>Music</Link>
                 </div>
                 <audio src="/audio/Call_Me.mp3" ref={audio} controls={false}></audio>
-                <div className={"relative p-6 h-[400px] md:h-[340px] xl:h-[400px] w-full bg-gray-800 flex justify-around rounded-2xl my-4 shadow-2xl border-2 border-gray-700 text-2xl"}>
+                <div className={"relative p-6 h-[400px] md:h-[340px] xl:h-[400px] w-full bg-gray-800 flex justify-around sm:rounded-2xl my-4 shadow-2xl sm:border-2 border-gray-700 text-2xl"}>
                     <MusicContext.Provider value={{source, setSource, pickSong, audio}}>
                         <button className={"bg-gray-900 rounded-full border-2 border-gray-600 h-20 w-20 absolute left-5 bottom-1/8 sm:bottom-1/2 md:fixed md:-z-50 md:w-0 md:border-none md:opacity-0"} onClick={() => setSongSelect(songSelect - 1)}>{"<"}</button>
                         <div className={`flex flex-col items-center ${Math.abs(songSelect % 3) !== 0 ? "fixed -z-10" : "absolute"} md:static md:z-10`}>
@@ -136,14 +143,14 @@ export default function Home() {
             </div>
             <div id={"blogs"} className={"relative -z-20"}>
                 <div className={`relative w-full flex flex-row-reverse transition-all duration-500 ${showMusic ? "mt-40 sm:mt-36 md:mt-30 lg:mt-24" : ""}`}>
-                    <div className={"w-full bg-gray-900 p-6 text-2xl rounded-2xl absolute bottom-full"}>
+                    <div className={"w-full bg-gray-900 p-6 text-2xl sm:rounded-2xl absolute bottom-full"}>
                         <p>Music that I have personally recorded, mixed, and mastered.</p>
                     </div>
-                    <Link href={"/blogs"} className={"text-6xl drop-shadow-2xl mt-6 mx-4"}>Blogs</Link>
+                    {/*<Link href={"/blogs"} className={"text-6xl drop-shadow-2xl mt-6 mx-4"}>Blogs</Link>*/}
                 </div>
-                <div className={"p-6 bg-gray-800 rounded-2xl mt-6 h-32 text-4xl shadow-2xl border-2 border-gray-700"}>
-                    <p>Personal blogs will be added in the future.</p>
-                </div>
+                {/*<div className={"p-6 bg-gray-800 rounded-2xl mt-6 h-32 text-4xl shadow-2xl border-2 border-gray-700"}>*/}
+                {/*    <p>Personal blogs will be added in the future.</p>*/}
+                {/*</div>*/}
             </div>
         </div>
     )
